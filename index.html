@@ -114,5 +114,5 @@ new MutationObserver(()=>{if(!selected)return;let label=[...$('detail').querySel
 function deleteReturnedRecord(id){if(!confirm('确认删除该条已退回记录？删除后不可恢复。'))return;data=data.filter(d=>d.id!==id);try{localStorage.setItem('hazard-review-v1',JSON.stringify(data))}catch{}render();notify('已退回记录已删除')}
 const renderWithReturnedActions=render;render=function(){renderWithReturnedActions();if(current===3){let list=filtered().slice((page-1)*6,page*6);document.querySelectorAll('#rows tr').forEach((tr,i)=>{let actions=tr.querySelector('.actions'),record=list[i];if(actions&&record&&!actions.querySelector('.delete-returned'))actions.insertAdjacentHTML('beforeend',`<button class="rowbtn danger delete-returned" onclick="deleteReturnedRecord('${record.id}')">删除</button>`)})}};render();
 $('flowModule').innerHTML='<option>隐患日清日结</option>';$('flowMeaning').insertAdjacentHTML('afterend','<div class="flow-meaning-count" id="flowMeaningCount">0 / 200</div>');$('flowMeaning').oninput=()=>$('flowMeaningCount').textContent=$('flowMeaning').value.length+' / 200';
-</script></body></html>
+</script><script src="xlsx.full.min.js"></script><script src="hazard-entry.js"></script></body></html>
 
