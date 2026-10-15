@@ -5,6 +5,9 @@ openRecord=function(id,review){openReviewBeforePresentation(id,review);if(!revie
 const closeReviewBeforePresentation=closeDrawer;closeDrawer=function(){$('footer').hidden=false;closeReviewBeforePresentation()};$('close').onclick=closeDrawer;
 const openEntryBeforeCounters=openEntry;openEntry=function(mode){openEntryBeforeCounters(mode);if(mode==='single'&&!$('entryOverlay').hidden)['ledgerDescription','ledgerMeasures'].forEach(id=>moveInputCountInside($(id),$(id)?.nextElementSibling))};
 moveInputCountInside($('flowMeaning'),$('flowMeaningCount'));
+// Entry buttons are presentation-only in the current prototype scope.
+$('importHazards')?.remove();
+$('addHazard').onclick=null;
 const flowCountLayout=document.createElement('style');flowCountLayout.textContent='.flow-form-grid>.input-count-wrap{grid-column:2}.input-count-wrap .flow-textarea{width:100%;margin:0}.input-count-wrap .inside-count{margin:0}';document.head.append(flowCountLayout);
 // Audit actions show only the decision form. The process belongs to detail information.
 const responsibleTagStyle=document.createElement('style');responsibleTagStyle.textContent='.responsible-tags{display:inline-flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0!important}.responsible-tag{display:inline-flex;align-items:center;gap:9px;background:#fafbfd;border:1px solid #d8e2ef;border-radius:3px;padding:3px 9px;color:#24344d}.responsible-tag button{border:0;background:transparent;color:#8190a5;padding:0;line-height:1;font-size:16px}.responsible-add{border:0!important;background:transparent!important;font-size:25px!important;padding:0 8px!important;height:34px!important;color:#24344d!important}';document.head.append(responsibleTagStyle);
