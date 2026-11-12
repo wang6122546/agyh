@@ -1,0 +1,145 @@
+{
+  "records": [
+    {
+      "id": "YH-20261111-001",
+      "title": "示例隐患 1",
+      "location": "示例区域 1",
+      "category": "通道占用",
+      "unit": "示例集团",
+      "level": "一般隐患",
+      "status": "待整改",
+      "version": 0,
+      "reviewers": [
+        "0"
+      ],
+      "rectifier": "0",
+      "inspector": "演示账号",
+      "received": "2026-01-01 09:01:00",
+      "history": []
+    },
+    {
+      "id": "YH-20261111-002",
+      "title": "示例隐患 2",
+      "location": "示例区域 2",
+      "category": "未戴安全帽",
+      "unit": "示例分公司甲",
+      "level": "轻微隐患",
+      "status": "待复查",
+      "version": 0,
+      "reviewers": [
+        "0"
+      ],
+      "rectifier": "0",
+      "inspector": "演示账号",
+      "received": "2026-01-01 09:02:00",
+      "history": []
+    },
+    {
+      "id": "YH-20261111-003",
+      "title": "示例隐患 3",
+      "location": "示例区域 3",
+      "category": "设施缺陷",
+      "unit": "示例分公司乙",
+      "level": "轻微隐患",
+      "status": "待复查",
+      "version": 0,
+      "reviewers": [
+        "0"
+      ],
+      "rectifier": "0",
+      "inspector": "演示账号",
+      "received": "2026-01-01 09:03:00",
+      "history": []
+    },
+    {
+      "id": "YH-20261111-004",
+      "title": "示例隐患 4",
+      "location": "示例区域 4",
+      "category": "现场防护",
+      "unit": "示例集团",
+      "level": "一般隐患",
+      "status": "待整改",
+      "version": 0,
+      "reviewers": [
+        "0"
+      ],
+      "rectifier": "1",
+      "inspector": "演示账号",
+      "received": "2026-01-01 09:04:00",
+      "history": []
+    },
+    {
+      "id": "YH-20261111-005",
+      "title": "示例隐患 5",
+      "location": "示例区域 5",
+      "category": "用电安全",
+      "unit": "示例分公司甲",
+      "level": "一般隐患",
+      "status": "已复查",
+      "version": 0,
+      "reviewers": [
+        "0"
+      ],
+      "rectifier": "0",
+      "inspector": "演示账号",
+      "received": "2026-01-01 09:05:00",
+      "history": [
+        {
+          "title": "复查通过",
+          "note": "示例复查记录",
+          "time": "2026-01-01 10:00:00",
+          "photos": []
+        }
+      ]
+    }
+  ],
+  "people": [
+    {
+      "id": "0",
+      "name": "演示账号",
+      "unit": "示例集团",
+      "phone": ""
+    },
+    {
+      "id": "1",
+      "name": "演示人员 1",
+      "unit": "示例分公司甲",
+      "phone": ""
+    },
+    {
+      "id": "2",
+      "name": "演示人员 2",
+      "unit": "示例分公司乙",
+      "phone": ""
+    },
+    {
+      "id": "3",
+      "name": "演示人员 3",
+      "unit": "示例集团",
+      "phone": ""
+    },
+    {
+      "id": "4",
+      "name": "演示人员 4",
+      "unit": "示例分公司甲",
+      "phone": ""
+    },
+    {
+      "id": "5",
+      "name": "演示人员 5",
+      "unit": "示例分公司乙",
+      "phone": ""
+    },
+    {
+      "id": "6",
+      "name": "演示人员 6",
+      "unit": "示例集团",
+      "phone": ""
+    }
+  ],
+  "units": [
+    "示例集团",
+    "示例分公司甲",
+    "示例分公司乙"
+  ]
+}

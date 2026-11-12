@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>隐患整改与复查 · 安全生产鞍钢项目</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="hazard.css">
+<script type="module" src="hazard.js"></script>
+</head>
+<body>
+<header><strong>安全生产鞍钢项目</strong></header>
+<aside aria-label="系统菜单">
+  <div class="system">☰　隐患治理系统</div>
+  <span>隐患治理一张图</span><span>统计报表</span><span>数据分析</span><span>计划管理</span>
+  <span>任务管理</span><span>扫码检查</span><span>督查检查</span><span>随机检查</span>
+  <span>举一反三</span><span>隐患随手拍</span>
+  <a id="fixMenu" href="hazard.html">隐患整改</a>
+  <a id="reviewMenu" href="hazard-review.html">隐患复查</a>
+  <span>隐患日清日结</span><span>检查表</span><span>巡查点位管理</span><span>隐患数据库</span>
+</aside>
+<main>
+  <div class="crumb">隐患治理系统 / <span id="pageName"></span></div>
+  <nav class="mobile-menu" aria-label="隐患治理"><a href="hazard.html">隐患整改</a><a href="hazard-review.html">隐患复查</a></nav>
+  <div class="ledger-layout">
+  <section class="org-panel" aria-labelledby="orgTitle">
+    <h2 id="orgTitle">所属单位</h2>
+    <input id="orgSearch" type="search" placeholder="请输入组织名称" aria-label="搜索所属单位">
+    <div id="orgList"></div>
+  </section>
+  <section class="workspace">
+    <span id="connection" role="status">正在连接</span>
+    <div id="summary" class="summary"></div>
+    <form id="filters" class="filters">
+      <label>单位名称<select name="unit"><option value="">全部单位</option></select></label>
+      <label>隐患等级<select name="level"><option value="">全部等级</option><option>轻微隐患</option><option>一般隐患</option><option>重大隐患</option></select></label>
+      <label class="keyword">关键词<input name="keyword" type="search" placeholder="搜索隐患位置 / 类型"></label>
+      <button type="submit" class="primary">查询</button><button type="reset">重置</button>
+    </form>
+    <div class="list-heading"><h2 id="listTitle">待整改</h2><div><button id="batch" hidden>批量复查</button><span id="total"></span></div></div>
+    <div id="records" class="table-wrap"></div>
+  </section>
+  </div>
+</main>
+<dialog id="editor" aria-labelledby="dialogTitle"><div id="dialogBody"></div></dialog>
+<div id="notice" role="status" hidden></div>
+</body>
+</html>
