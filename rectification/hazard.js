@@ -258,24 +258,26 @@ function open(action, items) {
     if (stage !== 'fix' || (action === 'remind' && rectifyStatus(record) !== '待整改')) return;
   } else if (action !== 'detail' && !items.every(canAct)) return;
   const assigning = action === 'assign';
+  const deleting = action === 'delete';
+  editor.classList.toggle('delete-dialog', deleting);
   editor.classList.toggle('assignment-dialog', assigning);
   const batch = items.length > 1;
-  const heading = batch ? '批量复查' : titles[action];
+  const heading = deleting ? '提示' : batch ? '批量复查' : titles[action];
   const fields = {
     detail: '',
     remind: '<p>确认催促该隐患的整改人处理？</p>',
-    delete: '<p>确认删除这条隐患？删除后将从整改和复查列表移除。</p>',
+    delete: '<p>确定删除该隐患吗？</p>',
     measure: noteField('临时安全措施', 200),
     assign: assignmentPicker,
     fix: noteField('整改描述', 100) + photoField(true) + `<fieldset><legend>${required} 隐患是否解决</legend>
       <div class="chips"><label><span><input type="radio" name="result" value="是" required> 是</span></label><label><span><input type="radio" name="result" value="否"> 否</span></label></div></fieldset>` + picker,
     review: `<label><span>${required} 复查结果</span><select name="result" required><option value="">请选择</option><option>通过</option><option>不通过</option></select></label>` + noteField('复查说明', 500) + photoField(false),
   }[action];
-  $('#dialogBody').innerHTML = `<div class="dialog-heading"><h2 id="dialogTitle">${heading}</h2><button type="button" data-close aria-label="关闭">×</button></div>
-    <div class="drawer-body">${batch ? `<div class="context">已选 ${items.length} 条隐患<ul>${items.map(item => '<li>' + safe(item.title) + '</li>').join('')}</ul></div>` : assigning ? '' : context(record)}
+  $('#dialogBody').innerHTML = `<div class="dialog-heading"><h2 id="dialogTitle">${deleting ? '<span class="delete-warning" aria-hidden="true">!</span>' : ''}${heading}</h2><button type="button" data-close aria-label="关闭">×</button></div>
+    <div class="drawer-body">${batch ? `<div class="context">已选 ${items.length} 条隐患<ul>${items.map(item => '<li>' + safe(item.title) + '</li>').join('')}</ul></div>` : assigning || deleting ? '' : context(record)}
     ${action === 'detail' ? '<h3 style="margin-top:16px">处理记录</h3>' + historyMarkup(record) : `<form id="operation">
       ${fields}<div id="error" class="error" role="alert"></div>
-      <div class="actions"><button type="button" data-close>${assigning ? '关闭' : '取消'}</button><button type="submit" class="${action === 'delete' ? 'danger' : 'primary'}">${{ assign: '确认', remind: '确认催促', delete: '确认删除' }[action] ?? '提交'}</button></div>
+      <div class="actions"><button type="button" data-close ${deleting ? 'autofocus' : ''}>${assigning ? '关闭' : '取消'}</button><button type="submit" class="primary">${{ assign: '确认', remind: '确认催促', delete: '确定' }[action] ?? '提交'}</button></div>
     </form>`}</div>`;
   editor.showModal();
   if (action === 'detail') return;

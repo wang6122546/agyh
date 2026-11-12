@@ -162,3 +162,23 @@ button.danger,.row-actions button.danger{border:1px solid #f16b73;color:#bd283a;
 .scope [aria-selected=false]:hover{--tab-fill:#e1ecff;color:#244fbc}
 .scope [aria-selected=true]{--tab-fill:#5078f6;color:#fff;font-weight:600}
 .scope [role=tab]:focus-visible{outline:2px solid #2952d0;outline-offset:1px}
+
+#editor.delete-dialog{
+  width:min(450px,calc(100vw - 32px));height:auto;margin:auto;border-radius:5px;
+  box-shadow:0 12px 36px #15243b35;
+}
+#editor.delete-dialog::backdrop{background:#0006}
+.delete-dialog .dialog-heading{border:0;padding:16px 24px 0 28px}
+.delete-dialog h2{display:flex;align-items:center;gap:7px;color:#202428}
+.delete-warning{
+  display:inline-grid;place-items:center;width:23px;height:23px;
+  border-radius:50%;background:#e6a23c;color:white;font-size:16px;
+}
+.delete-dialog .dialog-heading button{background:transparent;color:#666;padding:3px 5px}
+.delete-dialog .drawer-body{padding:10px 24px 20px 28px}
+.delete-dialog .drawer-body form{margin:0;gap:0}
+.delete-dialog p{margin:0 0 16px;color:#30343a}
+.delete-dialog .error:empty{display:none}
+.delete-dialog .actions{margin:0;gap:10px}
+.delete-dialog .actions [data-close]{background:white;color:#30343a;border:1px solid #dcdfe6}
+.delete-dialog .actions .primary{background:#5078f6;border:1px solid #5078f6}
