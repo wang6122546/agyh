@@ -30,6 +30,11 @@
   </section>
   <section class="workspace">
     <span id="connection" role="status">正在连接</span>
+    <div id="hazardScope" class="scope" role="tablist" aria-label="隐患层级">
+      <button id="scope-unit" type="button" role="tab" data-scope="unit" aria-selected="true" aria-controls="rectificationPanel">单位隐患</button>
+      <button id="scope-company" type="button" role="tab" data-scope="company" aria-selected="false" aria-controls="rectificationPanel" tabindex="-1">公司隐患</button>
+    </div>
+    <div id="rectificationPanel" role="tabpanel" aria-labelledby="scope-unit">
     <div id="summary" class="summary"></div>
     <form id="filters" class="filters">
       <label>单位名称<select name="unit"><option value="">全部单位</option></select></label>
@@ -39,6 +44,7 @@
     </form>
     <div class="list-heading"><h2 id="listTitle">待整改</h2><div><button id="batch" hidden>批量复查</button><span id="total"></span></div></div>
     <div id="records" class="table-wrap"></div>
+    </div>
   </section>
   </div>
 </main>

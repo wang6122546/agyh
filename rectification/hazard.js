@@ -11,7 +11,7 @@ const chosen = new Set();
 const stage = location.pathname.endsWith('/hazard-review.html') ? 'review' : 'fix';
 const pageName = titles[stage];
 const currentActor = '0';
-let reviewScope = 'mine';
+let scope = stage === 'review' ? 'mine' : 'unit';
 const owner = record => record.rectifier ?? (record.id.endsWith('-004') ? '1' : '0');
 const canAct = record => stage === 'review' ? record.reviewers.includes(currentActor) : owner(record) === currentActor;
 $('#pageName').textContent = pageName;
@@ -52,7 +52,9 @@ function render() {
   if (!state) return;
   const review = stage === 'review';
   const names = stages[stage];
-  const scoped = state.records.filter(record => !review || reviewScope === 'all' || canAct(record));
+  const scoped = state.records.filter(record => review
+    ? scope === 'all' || canAct(record)
+    : (record.hazardScope ?? (record.id.endsWith('-004') || record.id.endsWith('-003') ? 'company' : 'unit')) === scope);
   const groups = names.map((status, index) => !review && index === 0 ? scoped : scoped.filter(record =>
     (review ? record.status : rectifyStatus(record)) === status));
   renderUnits();
@@ -364,18 +366,19 @@ $('#summary').onclick = (event) => {
   statusIndex = Number(metric.dataset.status);
   render();
 };
-const scopeTabs = $('#scope');
+const scopeTabs = $('#scope') ?? $('#hazardScope');
 if (scopeTabs) {
   const tabs = [...scopeTabs.querySelectorAll('[role=tab]')];
   function activateScope(tab) {
-    if (reviewScope === tab.dataset.scope) return;
-    reviewScope = tab.dataset.scope;
+    if (scope === tab.dataset.scope) return;
+    scope = tab.dataset.scope;
+    if (stage === 'fix') statusIndex = 0;
     chosen.clear();
     for (const item of tabs) {
       item.setAttribute('aria-selected', item === tab);
       item.tabIndex = item === tab ? 0 : -1;
     }
-    $('#reviewPanel').setAttribute('aria-labelledby', tab.id);
+    document.getElementById(tab.getAttribute('aria-controls')).setAttribute('aria-labelledby', tab.id);
     render();
   }
   scopeTabs.onclick = (event) => {
