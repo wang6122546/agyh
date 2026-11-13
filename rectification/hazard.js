@@ -105,7 +105,6 @@ const required = '<span class="required" aria-hidden="true">*</span>';
 const noteField = (label, limit) => `<label><span>${required} ${label}</span><textarea name="note" placeholder="请输入${label}" maxlength="${limit}" required></textarea><span class="count">0/${limit}</span></label>`;
 const photoField = (mandatory) => `<div><label><span>${mandatory ? required : ''} 现场照片</span><input type="file" name="photos" accept="image/jpeg,image/png,image/webp,image/gif" multiple ${mandatory ? 'required' : ''}></label><div class="photos" id="previews"></div></div>`;
 const imageMarkup = (photos) => photos.map((url, index) => `<a href="${safe(url)}" download="现场照片-${index + 1}"><img src="${safe(url)}" alt="现场照片 ${index + 1}"></a>`).join('');
-const context = (record) => `<div class="context"><h3>${safe(record.title)}</h3><p>${record.id} · ${safe(record.level)} · ${safe(record.status)}</p><p>${safe(record.unit)} / ${safe(record.location)}</p></div>`;
 const historyMarkup = (record) => record.history.length ? `<ol class="history">${[...record.history].reverse().map(entry =>
   `<li><strong>${safe(entry.title)}</strong>　<small>${safe(entry.time)}</small><div>${safe(entry.note)}</div><div class="photos">${imageMarkup(entry.photos)}</div></li>`).join('')}</ol>` : '<p class="hint">暂无处理记录</p>';
 
@@ -274,7 +273,7 @@ function open(action, items) {
     review: `<label><span>${required} 复查结果</span><select name="result" required><option value="">请选择</option><option>通过</option><option>不通过</option></select></label>` + noteField('复查说明', 500) + photoField(false),
   }[action];
   $('#dialogBody').innerHTML = `<div class="dialog-heading"><h2 id="dialogTitle">${deleting ? '<span class="delete-warning" aria-hidden="true">!</span>' : ''}${heading}</h2><button type="button" data-close aria-label="关闭">×</button></div>
-    <div class="drawer-body">${batch ? `<div class="context">已选 ${items.length} 条隐患<ul>${items.map(item => '<li>' + safe(item.title) + '</li>').join('')}</ul></div>` : assigning || deleting ? '' : context(record)}
+    <div class="drawer-body">${batch ? `<div class="context">已选 ${items.length} 条隐患<ul>${items.map(item => '<li>' + safe(item.title) + '</li>').join('')}</ul></div>` : ''}
     ${action === 'detail' ? '<h3 style="margin-top:16px">处理记录</h3>' + historyMarkup(record) : `<form id="operation">
       ${fields}<div id="error" class="error" role="alert"></div>
       <div class="actions"><button type="button" data-close ${deleting ? 'autofocus' : ''}>${assigning ? '关闭' : '取消'}</button><button type="submit" class="primary">${{ assign: '确认', remind: '确认催促', delete: '确定' }[action] ?? '提交'}</button></div>
