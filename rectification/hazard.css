@@ -104,7 +104,7 @@ td:last-child{background:#edf6fd}tr:nth-child(even) td:last-child{background:#de
 .row-actions button:disabled{opacity:.45;cursor:not-allowed}
 button.danger,.row-actions button.danger{border:1px solid #f16b73;color:#bd283a;background:#fff4f5}
 
-#editor.assignment-dialog{
+#editor.assignment-dialog,.reviewer-dialog{
   width:min(1434px,calc(100vw - 32px));height:auto;max-height:calc(100dvh - 32px);
   margin:auto;border:1px solid #e0e5ee;border-radius:5px;
 }
@@ -193,3 +193,13 @@ button.danger,.row-actions button.danger{border:1px solid #f16b73;color:#bd283a;
   border-radius:50%;background:#67a747;color:white;font-size:11px;
 }
 #notice[data-tone="error"]{background:#fef0f0;color:#a42828;border-color:#fde2e2}
+
+.reviewer-field{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px;background:#f1f6fc}
+.reviewer-field .chips{margin:0}
+.reviewer-field .chips:empty{display:none}
+.reviewer-field .chips span{border:1px solid #d9dce4;background:#fff;border-radius:3px}
+.reviewer-field button{background:transparent;padding:0 5px}
+#addReviewer{font-size:20px;color:#253044}
+.reviewer-dialog{padding:0;max-width:calc(100vw - 32px)}
+.reviewer-dialog::backdrop{background:#17243b55}
+.reviewer-picker-body{display:grid;gap:14px;padding:18px 24px 0}

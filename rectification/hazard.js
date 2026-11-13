@@ -110,40 +110,55 @@ const imageMarkup = (photos) => photos.map((url, index) => `<a href="${safe(url)
 const historyMarkup = (record) => record.history.length ? `<ol class="history">${[...record.history].reverse().map(entry =>
   `<li><strong>${safe(entry.title)}</strong>　<small>${safe(entry.time)}</small><div>${safe(entry.note)}</div><div class="photos">${imageMarkup(entry.photos)}</div></li>`).join('')}</ol>` : '<p class="hint">暂无处理记录</p>';
 
-function personPicker(record) {
+const picker = `<div class="reviewer-field">
+  <span>${required} 隐患验收人员</span>
+  <div class="chips" id="reviewerCards"></div>
+  <button type="button" id="addReviewer" aria-label="选择隐患验收人员">＋</button>
+</div>`;
+
+function editReviewers(record) {
   const selected = new Set(record.reviewers);
-  const unit = $('#personUnit');
-  const search = $('#personSearch');
-  function showPeople() {
-    const matches = state.people.filter(person => (!unit.value || person.unit === unit.value) && person.name.includes(search.value.trim()));
-    $('#people').innerHTML = matches.map(person =>
-      `<label><input type="checkbox" value="${person.id}" ${selected.has(person.id) ? 'checked' : ''}>${safe(person.name)}<small>${safe(person.phone)}</small></label>`).join('') || '<p class="hint">暂无匹配人员</p>';
-    $('#picked').innerHTML = state.people.filter(person => selected.has(person.id)).map(person =>
-      `<span>${safe(person.name)} <button type="button" data-remove="${person.id}" aria-label="移除${safe(person.name)}">×</button></span>`).join('') || '请选择人员';
+  const cards = $('#reviewerCards');
+  const add = $('#addReviewer');
+  function renderCards() {
+    cards.innerHTML = state.people.filter(person => selected.has(person.id)).map(person =>
+      `<span>${safe(person.name)} <button type="button" data-remove="${safe(person.id)}" aria-label="移除${safe(person.name)}">×</button></span>`).join('');
   }
-  unit.onchange = search.oninput = showPeople;
-  $('#people').onchange = (event) => {
-    const input = event.target;
-    if (input.checked) selected.add(input.value);
-    else selected.delete(input.value);
-    showPeople();
-    $('#people').querySelector(`[value="${input.value}"]`)?.focus();
+  cards.onclick = (event) => {
+    const button = event.target.closest('[data-remove]');
+    if (!button) return;
+    selected.delete(button.dataset.remove);
+    renderCards();
+    add.focus();
   };
-  $('#picked').onclick = (event) => {
-    const id = event.target.dataset.remove;
-    if (id === undefined) return;
-    selected.delete(id);
-    showPeople();
-    search.focus();
+  add.onclick = () => {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'assignment-dialog reviewer-dialog';
+    dialog.setAttribute('aria-labelledby', 'reviewerDialogTitle');
+    dialog.innerHTML = `<div class="dialog-heading"><h2 id="reviewerDialogTitle">选择隐患验收人员</h2>
+      <button type="button" data-dismiss aria-label="关闭">×</button></div>
+      <div class="drawer-body"><div class="reviewer-picker-body">${assignmentPicker}
+      <div class="actions"><button type="button" data-dismiss>关闭</button><button type="button" class="primary" data-apply>确认</button></div>
+      </div></div>`;
+    editor.append(dialog);
+    const draft = selectReviewers(selected, dialog);
+    dialog.onclick = (event) => {
+      if (event.target.closest('[data-apply]')) {
+        selected.clear();
+        for (const id of draft) selected.add(id);
+        renderCards();
+        dialog.close();
+      } else if (event.target.closest('[data-dismiss]')) dialog.close();
+    };
+    dialog.addEventListener('close', () => {
+      dialog.remove();
+      add.focus();
+    }, { once: true });
+    dialog.showModal();
   };
-  showPeople();
+  renderCards();
   return selected;
 }
-
-const picker = `<fieldset><legend>${required} 隐患验收人员</legend>
-  <label>组织架构<select id="personUnit"><option value="">全部组织</option></select></label>
-  <label>选择人员<input id="personSearch" type="search" placeholder="按人员姓名搜索"></label>
-  <div id="people" class="people"></div><div class="chips" id="picked"></div></fieldset>`;
 
 const assignmentPicker = `
   <div class="selected-people"><span>已选人员</span><div id="picked" class="chips"></div></div>
@@ -167,13 +182,14 @@ const assignmentPicker = `
     </section>
   </div>`;
 
-function selectReviewers(record) {
-  const selected = new Set(record.reviewers);
-  const search = $('#personSearch');
-  const orgSearch = $('#pickerOrgSearch');
-  const units = $('#pickerUnits');
-  const people = $('#people');
-  const all = $('#selectPeople');
+function selectReviewers(reviewers, container = editor) {
+  const find = selector => container.querySelector(selector);
+  const selected = new Set(reviewers);
+  const search = find('#personSearch');
+  const orgSearch = find('#pickerOrgSearch');
+  const units = find('#pickerUnits');
+  const people = find('#people');
+  const all = find('#selectPeople');
   let source = 'org';
   let unit = '';
   let matches = [];
@@ -200,8 +216,8 @@ function selectReviewers(record) {
     all.checked = count > 0 && count === matches.length;
     all.indeterminate = count > 0 && count < matches.length;
     all.disabled = !matches.length;
-    $('#pickerCount').textContent = `共 ${matches.length} 条`;
-    $('#picked').innerHTML = state.people.filter(person => selected.has(person.id)).map(person =>
+    find('#pickerCount').textContent = `共 ${matches.length} 条`;
+    find('#picked').innerHTML = state.people.filter(person => selected.has(person.id)).map(person =>
       `<span>${safe(person.name)} <button type="button" data-remove="${safe(person.id)}" aria-label="移除${safe(person.name)}">×</button></span>`).join('') || '请选择人员';
   }
 
@@ -210,12 +226,12 @@ function selectReviewers(record) {
     else selected.delete(id);
   }
 
-  $('.picker-tabs').onclick = (event) => {
+  find('.picker-tabs').onclick = (event) => {
     const tab = event.target.closest('[data-source]');
     if (!tab) return;
     source = tab.dataset.source;
     unit = '';
-    for (const button of $('.picker-tabs').children) button.setAttribute('aria-pressed', button === tab);
+    for (const button of find('.picker-tabs').children) button.setAttribute('aria-pressed', button === tab);
     showUnits();
     showPeople();
   };
@@ -238,7 +254,7 @@ function selectReviewers(record) {
     for (const person of matches) toggle(person.id, checked);
     showPeople();
   };
-  $('#picked').onclick = (event) => {
+  find('#picked').onclick = (event) => {
     const button = event.target.closest('[data-remove]');
     if (!button) return;
     selected.delete(button.dataset.remove);
@@ -282,13 +298,8 @@ function open(action, items) {
   editor.showModal();
   if (action === 'detail') return;
   const form = $('#operation');
-  let selected;
-  if (assigning) selected = selectReviewers(record);
-  if ($('#personUnit')) {
-    $('#personUnit').insertAdjacentHTML('beforeend', state.units.map(unit => '<option>' + safe(unit) + '</option>').join(''));
-    $('#personUnit').value = record.unit;
-    selected = personPicker(record);
-  }
+  const selected = assigning ? selectReviewers(record.reviewers) :
+    action === 'fix' ? editReviewers(record) : undefined;
   const note = form.elements.note;
   if (note) note.oninput = () => { $('.count').textContent = `${note.value.length}/${note.maxLength}`; };
   const input = form.elements.photos;
