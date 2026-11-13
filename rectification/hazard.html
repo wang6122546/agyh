@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>隐患整改与复查 · 安全生产鞍钢项目</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="hazard.css">
-<script type="module" src="hazard.js"></script>
+<link rel="stylesheet" href="hazard.css?v=library-tabs">
+<script type="module" src="hazard.js?v=library-tabs"></script>
 </head>
 <body>
 <header><strong>安全生产鞍钢项目</strong></header>
@@ -31,8 +31,8 @@
   <section class="workspace">
     <span id="connection" role="status">正在连接</span>
     <div id="hazardScope" class="scope" role="tablist" aria-label="隐患层级">
-      <button id="scope-unit" type="button" role="tab" data-scope="unit" aria-selected="true" aria-controls="rectificationPanel">单位隐患</button>
-      <button id="scope-company" type="button" role="tab" data-scope="company" aria-selected="false" aria-controls="rectificationPanel" tabindex="-1">公司隐患</button>
+      <button id="scope-unit" type="button" role="tab" data-scope="unit" aria-selected="true" aria-controls="rectificationPanel">单位隐患库</button>
+      <button id="scope-company" type="button" role="tab" data-scope="company" aria-selected="false" aria-controls="rectificationPanel" tabindex="-1">公司隐患库</button>
     </div>
     <div id="rectificationPanel" role="tabpanel" aria-labelledby="scope-unit">
     <div id="summary" class="summary"></div>
