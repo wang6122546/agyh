@@ -182,3 +182,14 @@ button.danger,.row-actions button.danger{border:1px solid #f16b73;color:#bd283a;
 .delete-dialog .actions{margin:0;gap:10px}
 .delete-dialog .actions [data-close]{background:white;color:#30343a;border:1px solid #dcdfe6}
 .delete-dialog .actions .primary{background:#5078f6;border:1px solid #5078f6}
+
+#notice[data-tone="success"],#notice[data-tone="error"]{
+  inset:20px auto auto 50%;transform:translateX(-50%);z-index:10;
+  display:flex;align-items:center;gap:9px;background:#f0f9eb;color:#42722c;
+  border:1px solid #e1f3d8;
+}
+#notice[data-tone="success"]::before{
+  content:"✓";display:grid;place-items:center;width:16px;height:16px;
+  border-radius:50%;background:#67a747;color:white;font-size:11px;
+}
+#notice[data-tone="error"]{background:#fef0f0;color:#a42828;border-color:#fde2e2}

@@ -3,7 +3,7 @@ const $ = (selector) => document.querySelector(selector);
 const safe = (value) => String(value ?? '').replace(/[&<>"']/g, (char) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const stages = { fix: ['隐患数量', '已整改', '整改中', '待整改'], review: ['待复查', '已复查'] };
-const titles = { fix: '隐患整改', measure: '新增临时安全措施', assign: '重新指派验收人员', review: '隐患复查', detail: '隐患详情', remind: '催促整改', delete: '删除隐患' };
+const titles = { fix: '隐患整改', measure: '新增临时安全措施', assign: '重新指派验收人员', review: '隐患复查', detail: '隐患详情', delete: '删除隐患' };
 const editor = $('#editor');
 const filters = $('#filters');
 const records = $('#records');
@@ -253,8 +253,8 @@ function selectReviewers(record) {
 function open(action, items) {
   const [record] = items;
   if (!record) return;
-  if (action === 'remind' || action === 'delete') {
-    if (stage !== 'fix' || (action === 'remind' && rectifyStatus(record) !== '待整改')) return;
+  if (action === 'delete') {
+    if (stage !== 'fix') return;
   } else if (action !== 'detail' && !items.every(canAct)) return;
   const assigning = action === 'assign';
   const deleting = action === 'delete';
@@ -264,7 +264,6 @@ function open(action, items) {
   const heading = deleting ? '提示' : batch ? '批量复查' : titles[action];
   const fields = {
     detail: '',
-    remind: '<p>确认催促该隐患的整改人处理？</p>',
     delete: '<p>确定删除该隐患吗？</p>',
     measure: noteField('临时安全措施', 200),
     assign: assignmentPicker,
@@ -276,7 +275,7 @@ function open(action, items) {
     <div class="drawer-body">${batch ? `<div class="context">已选 ${items.length} 条隐患<ul>${items.map(item => '<li>' + safe(item.title) + '</li>').join('')}</ul></div>` : ''}
     ${action === 'detail' ? '<h3 style="margin-top:16px">处理记录</h3>' + historyMarkup(record) : `<form id="operation">
       ${fields}<div id="error" class="error" role="alert"></div>
-      <div class="actions"><button type="button" data-close ${deleting ? 'autofocus' : ''}>${assigning ? '关闭' : '取消'}</button><button type="submit" class="primary">${{ assign: '确认', remind: '确认催促', delete: '确定' }[action] ?? '提交'}</button></div>
+      <div class="actions"><button type="button" data-close ${deleting ? 'autofocus' : ''}>${assigning ? '关闭' : '取消'}</button><button type="submit" class="primary">${{ assign: '确认', delete: '确定' }[action] ?? '提交'}</button></div>
     </form>`}</div>`;
   editor.showModal();
   if (action === 'detail') return;
@@ -334,10 +333,7 @@ function open(action, items) {
       chosen.clear();
       editor.close();
       render();
-      $('#notice').textContent = ({ remind: '已记录催促', delete: '隐患已删除' })[action] ?? '已保存';
-      $('#notice').hidden = false;
-      clearTimeout(noticeTimer);
-      noticeTimer = setTimeout(() => { $('#notice').hidden = true; }, 3000);
+      showNotice(action === 'delete' ? '隐患已删除' : '已保存');
     } catch (error) {
       message.textContent = error.message || '保存失败，请重试。';
     } finally {
@@ -409,9 +405,46 @@ records.onchange = (event) => {
   else chosen.delete(event.target.dataset.select);
   updateBatch();
 };
+function showNotice(message, tone = '') {
+  const notice = $('#notice');
+  notice.dataset.tone = tone;
+  notice.textContent = message;
+  notice.hidden = false;
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => { notice.hidden = true; }, 3000);
+}
+
+async function remind(record, button) {
+  if (saving || stage !== 'fix' || rectifyStatus(record) !== '待整改') return;
+  saving = true;
+  ++sequence;
+  button.disabled = true;
+  try {
+    state = await request({
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'remind', actor: currentActor, ids: [record.id],
+        versions: { [record.id]: record.version }, photos: [],
+      }),
+    });
+    render();
+    showNotice('催促成功', 'success');
+  } catch (error) {
+    showNotice(error.message || '催促失败，请重试。', 'error');
+  } finally {
+    saving = false;
+    button.disabled = false;
+  }
+}
+
 records.onclick = (event) => {
   const button = event.target.closest('[data-action]');
-  if (button) open(button.dataset.action, state.records.filter(record => record.id === button.dataset.id));
+  if (!button || button.disabled || saving) return;
+  const record = state.records.find(item => item.id === button.dataset.id);
+  if (!record) return;
+  if (button.dataset.action === 'remind') remind(record, button);
+  else open(button.dataset.action, [record]);
 };
 $('#batch').onclick = () => open('review', state.records.filter(record => chosen.has(record.id) && canAct(record)));
 editor.onclick = (event) => { if (event.target.closest('[data-close]') && !saving) editor.close(); };
